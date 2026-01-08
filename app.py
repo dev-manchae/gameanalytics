@@ -321,13 +321,17 @@ plotly_template.layout = go.Layout(
     legend=dict(font=dict(family='VT323, monospace', size=18, color='#ffffff'))
 )
 
-# Chart interaction config - Modebar settings
+# Chart interaction config - Simplified modebar (Download PNG only)
 CHART_CONFIG = {
     'displayModeBar': 'hover',  # Show on hover
     'displaylogo': False,       # Hide Plotly logo
     'scrollZoom': False,        # Disable scroll zoom for easier page scrolling
-    'modeBarButtonsToAdd': ['zoom2d', 'pan2d', 'select2d', 'lasso2d'],
-    'modeBarButtonsToRemove': ['autoScale2d'],
+    'modeBarButtonsToRemove': [
+        'zoom2d', 'pan2d', 'select2d', 'lasso2d', 
+        'zoomIn2d', 'zoomOut2d', 'autoScale2d', 'resetScale2d',
+        'hoverClosestCartesian', 'hoverCompareCartesian',
+        'toggleSpikelines'
+    ],
     'toImageButtonOptions': {
         'format': 'png',
         'filename': 'sentiment_chart',
@@ -394,7 +398,21 @@ def create_quote_card(quote):
 # APP INITIALIZATION
 # ============================================
 
-app = dash.Dash(__name__, suppress_callback_exceptions=True)
+app = dash.Dash(
+    __name__, 
+    suppress_callback_exceptions=True,
+    meta_tags=[
+        # Mobile responsive viewport
+        {"name": "viewport", "content": "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"},
+        # iOS web app settings
+        {"name": "apple-mobile-web-app-capable", "content": "yes"},
+        {"name": "apple-mobile-web-app-status-bar-style", "content": "black-translucent"},
+        # Theme color for mobile browsers
+        {"name": "theme-color", "content": "#1a1a2e"},
+        # Description for SEO
+        {"name": "description", "content": "AI-Powered Steam Game Reviews Sentiment Analysis Dashboard"}
+    ]
+)
 app.title = "Sentiment Game Analytics"
 
 # ============================================

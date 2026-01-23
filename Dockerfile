@@ -8,12 +8,11 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install huggingface_hub specifically to download models efficiently
+# Install huggingface_hub to download models
 RUN pip install huggingface_hub
 
-# Download the model files to /app/model during the build.
-# This ensures the model is baked into the image and doesn't need to download at runtime.
-RUN huggingface-cli download manchae86/steam-review-roberta --local-dir /app/model --local-dir-use-symlinks False
+# Download the model using Python directly to avoid CLI PATH issues
+RUN python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='manchae86/steam-review-roberta', local_dir='/app/model', local_dir_use_symlinks=False)"
 
 # Copy requirements and install python packages
 COPY requirements.txt .
@@ -25,5 +24,5 @@ COPY . .
 # Expose port (Render uses PORT env variable)
 EXPOSE 10000
 
-# Run with gunicorn
+# Run with gunicorn - use PORT env variable for Render, fallback to 10000
 CMD gunicorn -b 0.0.0.0:${PORT:-10000} --timeout 120 app:server

@@ -12,6 +12,7 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import os
 import re
 import io
 import base64
@@ -242,9 +243,12 @@ def load_sentiment_model():
     
     _model_cache['loading'] = True
     try:
-        print("🤖 Loading AI model from HuggingFace...")
-        _model_cache['tokenizer'] = AutoTokenizer.from_pretrained("manchae86/steam-review-roberta")
-        _model_cache['model'] = AutoModelForSequenceClassification.from_pretrained("manchae86/steam-review-roberta")
+        print("🤖 Loading AI model from local path...")
+        # Load from local directory /app/model which was created during Docker build
+        model_path = os.path.join(os.getcwd(), "model")
+        
+        _model_cache['tokenizer'] = AutoTokenizer.from_pretrained(model_path)
+        _model_cache['model'] = AutoModelForSequenceClassification.from_pretrained(model_path)
         _model_cache['loaded'] = True
         _model_cache['loading'] = False
         print("✅ AI model loaded successfully!")

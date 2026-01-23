@@ -281,13 +281,7 @@ def predict_sentiment(text):
     except Exception as e:
         return None, None, str(e)
 
-# Preload model in background thread at startup
-import threading
-def _preload_model():
-    load_sentiment_model()
-
-# Start preloading in background
-threading.Thread(target=_preload_model, daemon=True).start()
+# Note: Model will be loaded on first use (lazy loading) to conserve memory on free tier
 
 # ============================================
 # COLOR SCHEME & TEMPLATE - RETRO PIXEL THEME
